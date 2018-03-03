@@ -22,10 +22,10 @@ var bot = new builder.UniversalBot(connector, (session) =>{
 });
 
 bot.dialog('welcome', (session)=>{
-    session.send("Welcome to OctoTalk!");
-    session.send("What can I do for you?")
+    session.say("Welcome to OctoTalk!", "Welcome to OctoTalk");
+    session.say("What can I do for you?", "What can I do for you?", { inputHint: builder.InputHint.expectingInput });
 }).beginDialogAction('getStatusAction', 'getStatus', {
-    matches: /^status$/i
+    matches: /.*status.*/gi
 });
 
 bot.dialog('getStatus', (session)=>{
@@ -38,6 +38,8 @@ bot.dialog('getStatus', (session)=>{
         }
     };
 
+    //TODO continue calling until request is done.
+    session.sendTyping();
     request(options, (error, response, body) => {
         if (error){
             return console.error("Error: " + error);
@@ -58,7 +60,8 @@ bot.dialog('getStatus', (session)=>{
             }
             var bedTemp = body.temperature.bed.actual;
             var extruderTemp = body.temperature.tool0.actual;
-            session.send(`Printer ${operationalStatus} operational and is ${printerState}.  The SD card ${sdCardStatus} available.  The bed temperature is ${bedTemp} and the extruder temperature is ${extruderTemp}`);
+            var status = `Printer ${operationalStatus} operational and is ${printerState}.  The SD card ${sdCardStatus} available.  The bed temperature is ${bedTemp} and the extruder temperature is ${extruderTemp}`;
+            session.say(status, status);
         
             
         }
