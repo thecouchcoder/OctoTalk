@@ -1,0 +1,26 @@
+{
+    "name": "octotalk",
+    "version": "1.0.0",
+    "description": "voice controlled 3d printer",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node index.js"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/aes421/OctoTalk.git"
+    },
+    "author": "Ashley E. Stallings",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/aes421/OctoTalk/issues"
+    },
+    "homepage": "https://github.com/aes421/OctoTalk#readme",
+    "dependencies": {
+      "botbuilder": "^3.14.0",
+      "request": "^2.83.0",
+      "restify": "^6.3.4"
+    }
+  }
+  
