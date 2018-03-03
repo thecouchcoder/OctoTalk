@@ -33,7 +33,7 @@ bot.dialog('getStatus', (session)=>{
     var apikey = "8943F3EDE930489BA4D97F7A54EF9F42";
 
     var options = {
-        url: '75.66.157.35/api/printer',
+        url: 'http://75.66.157.35/api/printer',
         headers: {
             'X-Api-Key': apikey
         }
@@ -68,21 +68,21 @@ bot.dialog('getStatus', (session)=>{
         }
     });
 
-    var options = {
-        url: 'http://192.168.0.108/api/job',
-        headers: {
-            'X-Api-Key': apikey
-        }
-    };
+    // var options = {
+    //     url: 'http://192.168.0.108/api/job',
+    //     headers: {
+    //         'X-Api-Key': apikey
+    //     }
+    // };
 
-    request(options, (error, response, body) => {
-        if (error){
-            return console.error("Error: " + error);
-        }
-        if(response.statusCode == 200){
-            var body = JSON.parse(body);
-            session.send(`The print is ${body.progress.completion.toFixed(0)}% done.`);
+    // request(options, (error, response, body) => {
+    //     if (error){
+    //         return console.error("Error: " + error);
+    //     }
+    //     if(response.statusCode == 200){
+    //         var body = JSON.parse(body);
+    //         session.send(`The print is ${body.progress.completion.toFixed(0)}% done.`);
             
-        }
-    });
+    //     }
+    // });
 });
