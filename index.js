@@ -33,7 +33,7 @@ bot.dialog('getStatus', (session)=>{
     var apikey = "8943F3EDE930489BA4D97F7A54EF9F42";
 
     var options = {
-        url: 'http://192.168.0.108/api/printer',
+        url: '75.66.157.35/api/printer',
         headers: {
             'X-Api-Key': apikey
         }
@@ -42,7 +42,6 @@ bot.dialog('getStatus', (session)=>{
     //TODO continue calling until request is done.
     session.sendTyping();
     request(options, (error, response, body) => {
-        console.log(response.statusCode);
         if (error){
             return console.error("Error: " + error);
         }
