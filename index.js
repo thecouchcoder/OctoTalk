@@ -67,21 +67,24 @@ bot.dialog('getStatus', (session)=>{
         }
     });
 
-    var options = {
-        url: 'http://192.168.0.108/api/job',
-        headers: {
-            'X-Api-Key': apikey
-        }
-    };
+    session.endDialog();
 
-    request(options, (error, response, body) => {
-        if (error){
-            return console.error("Error: " + error);
-        }
-        if(response.statusCode == 200){
-            var body = JSON.parse(body);
-            session.send(`The print is ${body.progress.completion.toFixed(0)}% done.`);
+    // var options = {
+    //     url: 'http://192.168.0.108/api/job',
+    //     headers: {
+    //         'X-Api-Key': apikey
+    //     }
+    // };
+
+    // request(options, (error, response, body) => {
+    //     if (error){
+    //         return console.error("Error: " + error);
+    //     }
+    //     if(response.statusCode == 200){
+    //         var body = JSON.parse(body);
+    //         var percentage = `The print is ${body.progress.completion.toFixed(0)}% done.`;
+    //         session.say(percentage, percentage);
             
-        }
-    });
+    //     }
+    // });
 });
