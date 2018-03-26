@@ -14,6 +14,12 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MicrosoftAppPassword 
 });
 
+var luisAppId = process.env.LuisAppId;
+var luisAPIKey = process.env.LuisAPIKey;
+var luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
+
+const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/${luisAppId}?subscription-key=${luisAPIKey}&verbose=true&timezoneOffset=-360&q=`;
+
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
@@ -21,16 +27,25 @@ var bot = new builder.UniversalBot(connector, (session) =>{
     session.beginDialog('welcome');
 });
 
+var recognizer = new builder.LuisRecognizer(LuisModelUrl);
+bot.recognizer(recognizer); 
+
 bot.dialog('welcome', (session)=>{
     session.say("Welcome to OctoTalk!", "Welcome to OctoTalk");
     session.say("What can I do for you?", "What can I do for you?", { inputHint: builder.InputHint.expectingInput });
 }).beginDialogAction('getStatusAction', 'getStatus', {
-    matches: /.*status.*/gi
+    matches: 'PrinterOperations.Status'///.*status.*/gi
+}).beginDialogAction('startPrintAction', 'startPrint', {
+    matches: 'JobOperations.Start'
 });
+
+bot.dialog('startPrint', (session)=>{
+    session.say("You have attempted to start a print")
+})
 
 bot.dialog('getStatus', (session)=>{
     session.say("Retrieving Status. Please wait.", { inputHint: builder.InputHint.ignoringInput });
-    var apikey = "8943F3EDE930489BA4D97F7A54EF9F42";
+    var apikey = process.env.OctoPrintAPIKey;
 
     var options = {
         url: 'http://75.66.157.35/api/printer',
