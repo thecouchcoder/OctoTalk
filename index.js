@@ -37,10 +37,33 @@ bot.dialog('welcome', (session)=>{
     matches: 'PrinterOperations.Status'///.*status.*/gi
 }).beginDialogAction('startPrintAction', 'startPrint', {
     matches: 'JobOperations.Start'
+}).beginDialogAction('stopPrintAction', 'stopPrint', {
+    matches: 'JobOperations.Cancel'
+}).beginDialogAction('pausePrintAction', 'pausePrint', {
+    matches: 'JobOperations.Pause'
+}).beginDialogAction('restartPrintAction', 'restartPrint', {
+    matches: 'JobOperations.Restart'
+}).beginDialogAction('NoneAction', 'repeat', {
+    matches: 'None'
 });
+
+bot.dialog('repeat', (session)=>{
+    session.say("I didn't quite get that")
+})
 
 bot.dialog('startPrint', (session)=>{
     session.say("You have attempted to start a print")
+})
+
+bot.dialog('stopPrint', (session)=>{
+    session.say("You have attempted to stop a print")
+})
+
+bot.dialog('pausePrint', (session)=>{
+    session.say("You have attempted to pause a print")
+})
+bot.dialog('restartPrint', (session)=>{
+    session.say("You have attempted to restart a print")
 })
 
 bot.dialog('getStatus', (session)=>{
