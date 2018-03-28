@@ -34,7 +34,7 @@ bot.dialog('welcome', (session)=>{
     session.say("Welcome to OctoTalk!", "Welcome to OctoTalk");
     session.say("What can I do for you?", "What can I do for you?", { inputHint: builder.InputHint.expectingInput });
 }).beginDialogAction('getStatusAction', 'getStatus', {
-    matches: 'PrinterOperations.Status'///.*status.*/gi
+    matches: 'PrinterOperations.Status'
 }).beginDialogAction('startPrintAction', 'startPrint', {
     matches: 'JobOperations.Start'
 }).beginDialogAction('stopPrintAction', 'stopPrint', {
@@ -53,6 +53,8 @@ bot.dialog('repeat', (session)=>{
 
 bot.dialog('startPrint', (session)=>{
     session.say("You have attempted to start a print")
+}).triggerAction({
+    matches: "JobOperations.Start"
 })
 
 bot.dialog('stopPrint', (session)=>{
