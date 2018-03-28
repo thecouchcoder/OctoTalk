@@ -33,22 +33,12 @@ bot.recognizer(recognizer);
 bot.dialog('welcome', (session)=>{
     session.say("Welcome to OctoTalk!", "Welcome to OctoTalk");
     session.say("What can I do for you?", "What can I do for you?", { inputHint: builder.InputHint.expectingInput });
-}).beginDialogAction('getStatusAction', 'getStatus', {
-    matches: 'PrinterOperations.Status'
-}).beginDialogAction('startPrintAction', 'startPrint', {
-    matches: 'JobOperations.Start'
-}).beginDialogAction('stopPrintAction', 'stopPrint', {
-    matches: 'JobOperations.Cancel'
-}).beginDialogAction('pausePrintAction', 'pausePrint', {
-    matches: 'JobOperations.Pause'
-}).beginDialogAction('restartPrintAction', 'restartPrint', {
-    matches: 'JobOperations.Restart'
-}).beginDialogAction('NoneAction', 'repeat', {
-    matches: 'None'
-});
+})
 
 bot.dialog('repeat', (session)=>{
     session.say("I didn't quite get that")
+}).triggerAction({
+    matches: "None"
 })
 
 bot.dialog('startPrint', (session)=>{
@@ -59,13 +49,20 @@ bot.dialog('startPrint', (session)=>{
 
 bot.dialog('stopPrint', (session)=>{
     session.say("You have attempted to stop a print")
+}).triggerAction({
+    matches: "JobOperations.Cancel"
 })
 
 bot.dialog('pausePrint', (session)=>{
     session.say("You have attempted to pause a print")
+}).triggerAction({
+    matches: "JobOperations.Pause"
 })
+
 bot.dialog('restartPrint', (session)=>{
     session.say("You have attempted to restart a print")
+}).triggerAction({
+    matches: "JobOperations.Restart"
 })
 
 bot.dialog('getStatus', (session)=>{
@@ -125,4 +122,6 @@ bot.dialog('getStatus', (session)=>{
             
     //     }
     // });
+}).triggerAction({
+    matches: "PrinterOperations.Status"
 });
