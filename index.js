@@ -65,6 +65,32 @@ bot.dialog('restartPrint', (session)=>{
     matches: "JobOperations.Restart"
 })
 
+bot.dialog('homePrinter', (session)=>{
+    session.say("Homing Printer", { inputHint: builder.InputHint.ignoringInput });
+    var apikey = process.env.OctoPrintAPIKey;
+
+    var options = {
+        url: 'http://75.66.157.35/api/printer/printhead',
+        method: 'POST',
+        headers: {
+            'X-Api-Key': apikey
+        },
+        json: {
+            "command": "home",
+            "axes": ["x", "y", "z"]
+        }
+    };
+    request(options, (error, response, body)=> {
+        if(response.statusCode !== 204){
+            session.say("Error communicating with printer");
+        }
+        //TODO Not sure if endConversation is appropriate here
+        session.endConversation();
+    });
+}).triggerAction({
+    matches: "PrinterOperations.Home"
+})
+
 bot.dialog('getStatus', (session)=>{
     session.say("Retrieving Status. Please wait.", { inputHint: builder.InputHint.ignoringInput });
     var apikey = process.env.OctoPrintAPIKey;
