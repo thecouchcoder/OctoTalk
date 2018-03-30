@@ -1,6 +1,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var request = require('request');
+var consts = require('./constants');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -33,39 +34,39 @@ bot.recognizer(recognizer);
 bot.dialog('welcome', (session)=>{
     session.say("Welcome to OctoTalk!", "Welcome to OctoTalk");
     session.say("What can I do for you?", "What can I do for you?", { inputHint: builder.InputHint.expectingInput });
-})
+});
 
 bot.dialog('repeat', (session)=>{
     session.say("I didn't quite get that")
 }).triggerAction({
     matches: "None"
-})
+});
 
 bot.dialog('startPrint', (session)=>{
     session.say("You have attempted to start a print")
 }).triggerAction({
     matches: "JobOperations.Start"
-})
+});
 
 bot.dialog('stopPrint', (session)=>{
     session.say("You have attempted to stop a print")
 }).triggerAction({
     matches: "JobOperations.Cancel"
-})
+});
 
 bot.dialog('pausePrint', (session)=>{
     session.say("You have attempted to pause a print")
 }).triggerAction({
     matches: "JobOperations.Pause"
-})
+});
 
 bot.dialog('restartPrint', (session)=>{
     session.say("You have attempted to restart a print")
 }).triggerAction({
     matches: "JobOperations.Restart"
-})
+});
 
-bot.dialog('homePrinter', (session)=>{
+bot.dialog('homePrinterHead', (session)=>{
     session.say("Homing Printer", { inputHint: builder.InputHint.ignoringInput });
     var apikey = process.env.OctoPrintAPIKey;
 
@@ -83,13 +84,31 @@ bot.dialog('homePrinter', (session)=>{
     request(options, (error, response, body)=> {
         if(response.statusCode !== 204){
             session.say("Error communicating with printer");
+            console.log('error: '+ response.statusCode);
+            console.log(body);
         }
         //TODO Not sure if endConversation is appropriate here
         session.endConversation();
     });
 }).triggerAction({
-    matches: "PrinterOperations.Home"
-})
+    matches: "PrinterOperations.PrintHead.Home"
+});
+
+bot.dialog('jogPrintHead', (session, args, next)=>{
+    session.say("moving printhead");
+    session.say(consts.MOVE_DISTANCE);
+    session.say("what's wrong");
+    //Resolve entities
+    var intent = args.intent;
+    var direction = builder.EntityRecognizer.findEntity(intent.entities, 'Direction');
+    var axis = builder.EntityRecognizer.findEntity(intent.entities, 'Axis');
+    var amount = builder.EntityRecognizer.findEntity(intent.entities, 'number');
+
+    //no amount is specified, use default amount
+    amount = amount ? amount.entity : consts.MOVE_DISTANCE;
+}).triggerAction({
+    matches: "PrinterOperations.PrintHead.Jog"
+});
 
 bot.dialog('getStatus', (session)=>{
     session.say("Retrieving Status. Please wait.", { inputHint: builder.InputHint.ignoringInput });
@@ -126,8 +145,6 @@ bot.dialog('getStatus', (session)=>{
             var extruderTemp = body.temperature.tool0.actual;
             var status = `Printer ${operationalStatus} operational and is ${printerState}.  The SD card ${sdCardStatus} available.  The bed temperature is ${bedTemp} and the extruder temperature is ${extruderTemp}`;
             session.say(status, status);
-        
-            
         }
     });
 
