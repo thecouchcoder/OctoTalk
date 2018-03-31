@@ -102,8 +102,7 @@ bot.dialog('jogPrintHead', [
         //Resolve entities
         var intent = args.intent;
         var direction = builder.EntityRecognizer.findEntity(intent.entities, 'Direction');
-        //TODO - not recognizing amount for some reason
-        var amount = builder.EntityRecognizer.findEntity(intent.entities, 'number');
+        var amount = builder.EntityRecognizer.findEntity(intent.entities, "builtin.number");
 
         //no amount is specified, use default amount
         //Normalize the amount if specified
