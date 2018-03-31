@@ -97,17 +97,19 @@ bot.dialog('homePrinterHead', (session)=>{
 
 bot.dialog('jogPrintHead', [
     function (session, args, next){
+        session.say("moving printhead");
         //Resolve entities
         var intent = args.intent;
         var direction = builder.EntityRecognizer.findEntity(intent.entities, 'Direction');
+        //TODO - not recognizing amount for some reason
         var amount = builder.EntityRecognizer.findEntity(intent.entities, 'number');
-        session.say(amount.toString());
 
         //no amount is specified, use default amount
         session.dialogData.amount = amount ? amount.entity : consts.MOVE_DISTANCE;
         
         //must know which direction to move
-        if (!direction){
+        //TODO There's definitely a better way to do this through LUIS... need to figure it out
+        if (!direction || !consts.DIRECTIONS.hasOwnProperty(direction.entity)){
             builder.Prompts.choice(session, "Which direction?", "up|down|left|right|forward|back", {listStyle: 3});
         }
         else{
@@ -120,7 +122,6 @@ bot.dialog('jogPrintHead', [
             session.dialogData.direction = results.response.entity;
         }
 
-        session.say(session.dialogData.direction);
         session.say(session.dialogData.amount.toString());
         var apikey = process.env.OctoPrintAPIKey;
         var options = {
@@ -136,6 +137,16 @@ bot.dialog('jogPrintHead', [
                 "z": 0
             }
         }
+
+        // request(options, (error, response, body)=> {
+        //     if(response.statusCode !== 204){
+        //         session.say("Error communicating with printer");
+        //         console.log('error: '+ response.statusCode);
+        //         console.log(body);
+        //     }
+        //     //TODO Not sure if endConversation is appropriate here
+        //     session.endConversation();
+        // });
     }
 ]).triggerAction({
     matches: "PrinterOperations.PrintHead.Jog"
