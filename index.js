@@ -105,7 +105,8 @@ bot.dialog('jogPrintHead', [
         var amount = builder.EntityRecognizer.findEntity(intent.entities, 'number');
 
         //no amount is specified, use default amount
-        session.dialogData.amount = amount ? amount.entity : consts.MOVE_DISTANCE;
+        //Normalize the amount if specified
+        session.dialogData.amount = amount ? Math.abs(parseInt(amount.entity)) : consts.MOVE_DISTANCE;
         
         //must know which direction to move
         //TODO There's definitely a better way to do this through LUIS... need to figure it out
@@ -122,6 +123,22 @@ bot.dialog('jogPrintHead', [
             session.dialogData.direction = results.response.entity;
         }
 
+        x = y = z = 0;
+
+        //map to printer's language
+        // 1) Determine which coordinate based on direction
+        // 2) Add negative if necessary based on direction
+        d = consts.DIRECTIONS[session.dialogData.direction]; 
+        if (d.includes("x")) {
+            x = d.includes("-") ? session.dialogData.amount * -1 : session.dialogData.amount;
+        }
+        else if (d.includes("y")){
+            y = d.includes("-") ? session.dialogData.amount * -1 : session.dialogData.amount;
+        }
+        else {
+            z = d.includes("-") ? session.dialogData.amount * -1 : session.dialogData.amount;
+        }
+        session.say(`${x}, ${y}, ${z}`);
         session.say(session.dialogData.amount.toString());
         var apikey = process.env.OctoPrintAPIKey;
         var options = {
@@ -132,9 +149,9 @@ bot.dialog('jogPrintHead', [
             },
             json: {
                 "command": "jog",
-                "x": 0,
-                "y": 0,
-                "z": 0
+                "x": x,
+                "y": y,
+                "z": z
             }
         }
 
