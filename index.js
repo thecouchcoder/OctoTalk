@@ -95,6 +95,7 @@ bot.dialog('homePrinterHead', (session)=>{
     matches: "PrinterOperations.PrintHead.Home"
 });
 
+//TODO only possible to use relative positioning currently
 bot.dialog('jogPrintHead', [
     function (session, args, next){
         session.say("moving printhead");
@@ -155,15 +156,15 @@ bot.dialog('jogPrintHead', [
             }
         }
 
-        // request(options, (error, response, body)=> {
-        //     if(response.statusCode !== 204){
-        //         session.say("Error communicating with printer");
-        //         console.log('error: '+ response.statusCode);
-        //         console.log(body);
-        //     }
-        //     //TODO Not sure if endConversation is appropriate here
-        //     session.endConversation();
-        // });
+        request(options, (error, response, body)=> {
+            if(response.statusCode !== 204){
+                session.say("Error communicating with printer");
+                console.log('error: '+ response.statusCode);
+                console.log(body);
+            }
+            //TODO Not sure if endConversation is appropriate here
+            session.endConversation();
+        });
     }
 ]).triggerAction({
     matches: "PrinterOperations.PrintHead.Jog"
