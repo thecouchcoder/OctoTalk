@@ -1,3 +1,3 @@
 module.exports = {
-    MOVE_DISTANCE: "5"
+    MOVE_DISTANCE: 5
 };

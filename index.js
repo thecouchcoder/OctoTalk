@@ -24,9 +24,10 @@ const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/${luisAppId}?sub
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
+var inMemoryStorage = new builder.MemoryBotStorage();
 var bot = new builder.UniversalBot(connector, (session) =>{
     session.beginDialog('welcome');
-});
+}).set('storage', inMemoryStorage);
 
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 bot.recognizer(recognizer); 
@@ -94,19 +95,49 @@ bot.dialog('homePrinterHead', (session)=>{
     matches: "PrinterOperations.PrintHead.Home"
 });
 
-bot.dialog('jogPrintHead', (session, args, next)=>{
-    session.say("moving printhead");
-    session.say(consts.MOVE_DISTANCE);
-    session.say("what's wrong");
-    //Resolve entities
-    var intent = args.intent;
-    var direction = builder.EntityRecognizer.findEntity(intent.entities, 'Direction');
-    var axis = builder.EntityRecognizer.findEntity(intent.entities, 'Axis');
-    var amount = builder.EntityRecognizer.findEntity(intent.entities, 'number');
+bot.dialog('jogPrintHead', [
+    function (session, args, next){
+        //Resolve entities
+        var intent = args.intent;
+        var direction = builder.EntityRecognizer.findEntity(intent.entities, 'Direction');
+        var amount = builder.EntityRecognizer.findEntity(intent.entities, 'number');
+        session.say(amount.toString());
 
-    //no amount is specified, use default amount
-    amount = amount ? amount.entity : consts.MOVE_DISTANCE;
-}).triggerAction({
+        //no amount is specified, use default amount
+        session.dialogData.amount = amount ? amount.entity : consts.MOVE_DISTANCE;
+        
+        //must know which direction to move
+        if (!direction){
+            builder.Prompts.choice(session, "Which direction?", "up|down|left|right|forward|back", {listStyle: 3});
+        }
+        else{
+            session.dialogData.direction = direction.entity;
+            next();
+        }
+    },
+    function (session, results){
+        if (results.response){
+            session.dialogData.direction = results.response.entity;
+        }
+
+        session.say(session.dialogData.direction);
+        session.say(session.dialogData.amount.toString());
+        var apikey = process.env.OctoPrintAPIKey;
+        var options = {
+            url: 'http://75.66.157.35/api/printer/printhead',
+            method: 'POST',
+            headers: {
+                'X-Api-Key': apikey
+            },
+            json: {
+                "command": "jog",
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        }
+    }
+]).triggerAction({
     matches: "PrinterOperations.PrintHead.Jog"
 });
 
