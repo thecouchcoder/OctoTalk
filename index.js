@@ -88,14 +88,15 @@ bot.dialog('homePrinterHead', (session)=>{
             console.log('error: '+ response.statusCode);
             console.log(body);
         }
-        //TODO Not sure if endConversation is appropriate here
+        // TODO endConversation is probably not appropriate here
         session.endConversation();
     });
 }).triggerAction({
     matches: "PrinterOperations.PrintHead.Home"
 });
 
-//TODO only possible to use relative positioning currently
+// TODO write code to make absolute positioning possible
+// BODY currently only relative positioning is possible
 bot.dialog('jogPrintHead', [
     function (session, args, next){
         session.say("moving printhead");
@@ -161,7 +162,7 @@ bot.dialog('jogPrintHead', [
                 console.log('error: '+ response.statusCode);
                 console.log(body);
             }
-            //TODO Not sure if endConversation is appropriate here
+            // TODO endConversation is probably not appropriate here
             session.endConversation();
         });
     }
@@ -180,7 +181,7 @@ bot.dialog('getStatus', (session)=>{
         }
     };
 
-    //TODO continue calling until request is done.
+    // TODO continue calling this until request is done.
     session.sendTyping();
     request(options, (error, response, body) => {
         if (error){
@@ -227,6 +228,3 @@ bot.dialog('getStatus', (session)=>{
 }).triggerAction({
     matches: "PrinterOperations.Status"
 });
-
-// TODO test1
-// @todo test3
