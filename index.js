@@ -3,6 +3,8 @@ var builder = require('botbuilder');
 var request = require('request');
 var consts = require('./constants');
 
+//TODO Testing 1!
+
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
