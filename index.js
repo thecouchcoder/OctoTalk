@@ -3,10 +3,6 @@ var builder = require('botbuilder');
 var request = require('request');
 var consts = require('./constants');
 
-// TODO test1
-// :TODO: test2
-// @todo test3
-
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -231,3 +227,6 @@ bot.dialog('getStatus', (session)=>{
 }).triggerAction({
     matches: "PrinterOperations.Status"
 });
+
+// TODO test1
+// @todo test3
