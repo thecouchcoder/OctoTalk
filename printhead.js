@@ -32,6 +32,7 @@ module.exports = {
 
     // TODO write code to make absolute positioning possible
     // TODO allow moving multiple directions at once
+    // TODO add support for speed
     jog: [
         function (session, args, next) {
             session.say("moving printhead");
