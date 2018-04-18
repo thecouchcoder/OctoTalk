@@ -3,6 +3,7 @@ var builder = require('botbuilder');
 var request = require('request');
 var printhead = require('./printhead');
 var printer = require('./printer');
+var tool = require('./tool');
 
 //TODO Testing 1!
 
@@ -80,4 +81,8 @@ bot.dialog('jogPrintHead', printhead.jog).triggerAction({
 
 bot.dialog('getStatus', printer.status).triggerAction({
     matches: "PrinterOperations.Status"
+});
+
+bot.dialog('targetTemp', tool.targetTemp).triggerAction({
+    matches: "PrinterOperations.Tool.TargetTemp"
 });
